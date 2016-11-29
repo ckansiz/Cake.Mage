@@ -118,6 +118,7 @@ namespace Cake.Mage
             var resolver = new DotNetToolResolver(context.FileSystem, context.Environment, context.Registry);
             var runner = new NewOrUpdateMageTool(context.FileSystem, context.Environment, context.ProcessRunner, context.Tools, context.Registry, resolver);
             runner.NewOrUpdate(settings);
+            runner.ExtendDeployment(settings);
         }
     }
 }

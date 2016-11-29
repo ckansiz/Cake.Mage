@@ -47,6 +47,20 @@ namespace Cake.Mage
         public bool Install { get; set; } = true;
 
         /// <summary>
+        /// Gets or sets a value indicating whether if the application is web compatible (.deploy)
+        /// application.
+        /// </summary>
+        /// <value>The install.</value>
+        public bool WebInstallCompatible { get; set; } = true;
+
+        /// <summary>
+        /// Cretate Desktop Shortcut
+        /// application.
+        /// </summary>
+        /// <value>The install.</value>
+        public bool CreateShortcut { get; set; } = false;
+
+        /// <summary>
         /// Gets or sets whether the manifest being generated specifies a minimum version.
         /// Must be of the form "0.0.0.0".  Specifying "none" removes this from the manifest.
         /// </summary>

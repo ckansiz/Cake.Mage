@@ -2,6 +2,8 @@
 using Cake.Core;
 using Cake.Core.IO;
 using Cake.Core.Tooling;
+using System.IO;
+using System.Text;
 
 namespace Cake.Mage
 {
@@ -13,6 +15,35 @@ namespace Cake.Mage
         /// <param name="settings">The settings.</param>
         public void NewOrUpdate(BaseNewAndUpdateMageSettings settings) => Run(settings, GetNewOrUpdateArguments(settings));
 
+        public void ExtendDeployment(BaseNewAndUpdateMageSettings settings)
+        {
+            var newOrUpdateApplicationSettings = settings as BaseNewAndUpdateDeploymentSettings;
+            if (newOrUpdateApplicationSettings != null)
+            {
+                var fileString = File.ReadAllText(newOrUpdateApplicationSettings.ToFile.FullPath);
+                //if (newOrUpdateApplicationSettings.WebInstallCompatible)
+                //    fileString = fileString.Replace("<deployment install=\"true\">", "<deployment install=\"true\" mapFileExtensions=\"true\">");
+
+
+                var builder = new StringBuilder();
+                builder.Append("<deployment install=\"");
+                builder.Append(newOrUpdateApplicationSettings.Install.ToString().ToLower());
+                builder.Append("\" ");
+
+                if (newOrUpdateApplicationSettings.WebInstallCompatible)
+                    builder.Append("mapFileExtensions=\"true\" ");
+
+                if (newOrUpdateApplicationSettings.CreateShortcut)
+                    builder.Append("co.v1:createDesktopShortcut=\"true\" xmlns:co.v1=\"urn:schemas-microsoft-com:clickonce.v1\" ");
+                
+                builder.Append(">");
+
+                fileString = fileString.Replace("<deployment install=\"true\">", builder.ToString());
+                File.WriteAllText(newOrUpdateApplicationSettings.ToFile.FullPath, fileString);
+            }
+
+        }
+
         private ProcessArgumentBuilder GetNewOrUpdateArguments(BaseNewAndUpdateMageSettings settings)
         {
             if (string.IsNullOrWhiteSpace(settings.Password) == false && settings.CertFile == null)
@@ -20,7 +51,7 @@ namespace Cake.Mage
 
             var builder = new ProcessArgumentBuilder();
             var newOrUpdateApplicationSettings = settings as BaseNewAndUpdateApplicationSettings;
-            
+
             if (newOrUpdateApplicationSettings != null)
             {
                 if (newOrUpdateApplicationSettings is NewApplicationSettings)
@@ -56,11 +87,16 @@ namespace Cake.Mage
                     builder = builder.AppendSwitchQuoted("-update", updatePath);
                 }
 
+                Console.WriteLine("");
+                Console.WriteLine("Debug");
+
+                Console.WriteLine(newOrUpdateDeploymentSettings.Install);
+
                 builder = builder
                     .AppendNonNullUriSwitch("-appc", newOrUpdateDeploymentSettings.AppCodeBaseUri)
                     .AppendNonNullFilePathSwitch("-appc", newOrUpdateDeploymentSettings.AppCodeBaseFilePath, Environment)
                     .AppendNonNullFilePathSwitch("-appm", newOrUpdateDeploymentSettings.AppManifest, Environment)
-                    .AppendIfNotDefaultSwitch("-i", newOrUpdateDeploymentSettings.Install, true)
+                    .AppendIfNotDefaultSwitch("-i", newOrUpdateDeploymentSettings.Install, false)
                     .AppendNonEmptySwitch("-mv", newOrUpdateDeploymentSettings.MinVersion)
                     .AppendIfNotDefaultSwitch("-ip", newOrUpdateDeploymentSettings.IncludeProviderUrl, true)
                     .AppendNonNullUriSwitch("-pu", newOrUpdateDeploymentSettings.ProviderUrl);
@@ -78,7 +114,7 @@ namespace Cake.Mage
                 .AppendNonNullUriSwitch("-ti", settings.TimeStampUri)
                 .AppendNonNullFilePathSwitch("-t", settings.ToFile, Environment)
                 .AppendNonEmptySwitch("-v", settings.Version)
-                .AppendIfNotDefaultSwitch("-w", settings.WpfBrowserApp, false);            
+                .AppendIfNotDefaultSwitch("-w", settings.WpfBrowserApp, false);
         }
 
         internal NewOrUpdateMageTool(IFileSystem fileSystem, ICakeEnvironment environment, IProcessRunner processRunner, IToolLocator tools, IRegistry registry, DotNetToolResolver dotNetToolResolver) : base(fileSystem, environment, processRunner, tools, registry, dotNetToolResolver)
