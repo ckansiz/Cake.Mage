@@ -64,8 +64,13 @@ namespace Cake.Mage
                     builder = builder.AppendSwitchQuoted("-update", updatePath);
                 }
 
+                Console.WriteLine("");
+                Console.WriteLine("Icon File : ");
+                Console.WriteLine(newOrUpdateApplicationSettings.IconFile);
+
                 builder = builder.AppendNonNullDirectoryPathSwitch("-fd", newOrUpdateApplicationSettings.FromDirectory, Environment)
-                    .AppendNonNullFilePathSwitch("-if", newOrUpdateApplicationSettings.IconFile, Environment)
+                    //.AppendNonNullFilePathSwitch("-if", newOrUpdateApplicationSettings.IconFile, Environment)
+                    .AppendNonNullFileNameSwitch("-if", newOrUpdateApplicationSettings.IconFile, Environment)
                     .AppendIfNotDefaultSwitch("-tr", newOrUpdateApplicationSettings.TrustLevel, TrustLevel.Default)
                     .AppendIfNotDefaultSwitch("-um", newOrUpdateApplicationSettings.UseManifestForTrust, false);
             }
