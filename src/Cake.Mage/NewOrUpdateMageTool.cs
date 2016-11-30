@@ -4,6 +4,8 @@ using Cake.Core.IO;
 using Cake.Core.Tooling;
 using System.IO;
 using System.Text;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Cake.Mage
 {
@@ -21,9 +23,6 @@ namespace Cake.Mage
             if (newOrUpdateApplicationSettings != null)
             {
                 var fileString = File.ReadAllText(newOrUpdateApplicationSettings.ToFile.FullPath);
-                //if (newOrUpdateApplicationSettings.WebInstallCompatible)
-                //    fileString = fileString.Replace("<deployment install=\"true\">", "<deployment install=\"true\" mapFileExtensions=\"true\">");
-
 
                 var builder = new StringBuilder();
                 builder.Append("<deployment install=\"");
@@ -31,11 +30,19 @@ namespace Cake.Mage
                 builder.Append("\" ");
 
                 if (newOrUpdateApplicationSettings.WebInstallCompatible)
+                {
                     builder.Append("mapFileExtensions=\"true\" ");
+
+                    var files = Directory.GetFiles(newOrUpdateApplicationSettings.ToFile.GetDirectory().ToString(),"*",SearchOption.AllDirectories).Where(x=> !x.EndsWith(".manifest") && !x.EndsWith(".application") && !x.EndsWith(".ico"));
+                    foreach (var file in files)
+                    {
+                        File.Move(file, string.Format("{0}.deploy", file));
+                    }
+                }
 
                 if (newOrUpdateApplicationSettings.CreateShortcut)
                     builder.Append("co.v1:createDesktopShortcut=\"true\" xmlns:co.v1=\"urn:schemas-microsoft-com:clickonce.v1\" ");
-                
+
                 builder.Append(">");
 
                 fileString = fileString.Replace("<deployment install=\"true\">", builder.ToString());
