@@ -106,7 +106,7 @@ namespace Cake.Mage
 
                 builder = builder
                     .AppendNonNullUriSwitch("-appc", newOrUpdateDeploymentSettings.AppCodeBaseUri)
-                    .AppendNonNullFilePathSwitch("-appc", newOrUpdateDeploymentSettings.AppCodeBaseFilePath, Environment)
+                    .AppendNonNullFileNameSwitch("-appc", newOrUpdateDeploymentSettings.AppCodeBaseFilePath, Environment)
                     .AppendNonNullFilePathSwitch("-appm", newOrUpdateDeploymentSettings.AppManifest, Environment)
                     .AppendIfNotDefaultSwitch("-i", newOrUpdateDeploymentSettings.Install, false)
                     .AppendNonEmptySwitch("-mv", newOrUpdateDeploymentSettings.MinVersion)
