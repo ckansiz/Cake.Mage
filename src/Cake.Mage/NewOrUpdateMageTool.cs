@@ -71,10 +71,6 @@ namespace Cake.Mage
                     builder = builder.AppendSwitchQuoted("-update", updatePath);
                 }
 
-                Console.WriteLine("");
-                Console.WriteLine("Icon File : ");
-                Console.WriteLine(newOrUpdateApplicationSettings.IconFile);
-
                 builder = builder.AppendNonNullDirectoryPathSwitch("-fd", newOrUpdateApplicationSettings.FromDirectory, Environment)
                     //.AppendNonNullFilePathSwitch("-if", newOrUpdateApplicationSettings.IconFile, Environment)
                     .AppendNonNullFileNameSwitch("-if", newOrUpdateApplicationSettings.IconFile, Environment)
@@ -98,11 +94,6 @@ namespace Cake.Mage
                     var updatePath = ((UpdateDeploymentSettings)newOrUpdateDeploymentSettings).FileToUpdate.MakeAbsolute(Environment).FullPath;
                     builder = builder.AppendSwitchQuoted("-update", updatePath);
                 }
-
-                Console.WriteLine("");
-                Console.WriteLine("Debug");
-
-                Console.WriteLine(newOrUpdateDeploymentSettings.Install);
 
                 builder = builder
                     .AppendNonNullUriSwitch("-appc", newOrUpdateDeploymentSettings.AppCodeBaseUri)
