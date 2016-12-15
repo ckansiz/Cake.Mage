@@ -32,8 +32,8 @@ namespace Cake.Mage
                 if (newOrUpdateApplicationSettings.WebInstallCompatible)
                 {
                     builder.Append("mapFileExtensions=\"true\" ");
-
-                    var files = Directory.GetFiles(newOrUpdateApplicationSettings.ToFile.GetDirectory().ToString(),"*",SearchOption.AllDirectories).Where(x=> !x.EndsWith(".manifest") && !x.EndsWith(".application") && !x.EndsWith(".ico"));
+                    // && !x.EndsWith(".ico")
+                    var files = Directory.GetFiles(newOrUpdateApplicationSettings.ToFile.GetDirectory().ToString(),"*",SearchOption.AllDirectories).Where(x=> !x.EndsWith(".manifest") && !x.EndsWith(".application"));
                     foreach (var file in files)
                     {
                         File.Move(file, string.Format("{0}.deploy", file));
